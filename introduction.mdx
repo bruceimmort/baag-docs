@@ -1,0 +1,31 @@
+---
+title: "Introduction"
+description: "Show your Baag store on your own website and take payments."
+icon: "book"
+---
+
+## Base URL
+
+```bash
+https://api.baag.cc/v1
+```
+
+## Endpoints
+
+| Method | Endpoint | Key |
+|:--|:--|:--|
+| `GET` | [`/v1/store`](/v1/store) | Public or secret |
+| `GET` | [`/v1/products`](/v1/products/list) | Public or secret |
+| `GET` | [`/v1/products/{slug}`](/v1/products/get) | Public or secret |
+| `GET` | [`/v1/collections`](/v1/collections/list) | Public or secret |
+| `GET` | [`/v1/collections/{id}/products`](/v1/collections/products) | Public or secret |
+| `POST` | [`/v1/checkout/sessions`](/v1/checkout/create) | Public or secret |
+| `GET` | [`/v1/checkout/sessions/{id}`](/v1/checkout/get) | **Secret only** |
+
+## Note
+
+- The API is part of the **Basic** plan.
+- Prices are whole **RWF**: `25000` = 25,000 RWF.
+- Requests and responses are JSON.
+- Product lists are paged: pass `nextCursor` as `cursor` to get the next page.
+- All errors have one shape: [Errors](/errors).

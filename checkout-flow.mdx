@@ -1,0 +1,91 @@
+---
+title: "Checkout"
+description: "Send the buyer to Baag's checkout page, then confirm the payment."
+icon: "receipt"
+---
+
+<Steps>
+  <Step title="Create a session">
+    [`POST /v1/checkout/sessions`](/v1/checkout/create) with your public or secret key.
+
+    ```bash
+    curl -X POST https://api.baag.cc/v1/checkout/sessions \
+      -H "Authorization: Bearer pk_live_xxxxxxxxx" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "items": [{ "product": "mw6", "size": "M", "color": "Red", "quantity": 2 }],
+        "successUrl": "https://yoursite.com/thanks",
+        "cancelUrl": "https://yoursite.com/cart"
+      }'
+    ```
+  </Step>
+
+  <Step title="Redirect the buyer to the session url">
+    ```javascript
+    window.location.href = session.url; // https://checkout.baag.cc/cs_…
+    ```
+  </Step>
+
+  <Step title="The buyer comes back">
+    Paid: `https://yoursite.com/thanks?session_id=cs_…`
+
+    Left without paying: your `cancelUrl`.
+  </Step>
+
+  <Step title="Confirm the payment on your server">
+    [`GET /v1/checkout/sessions/{id}`](/v1/checkout/get) with your **secret key**. Paid when `status` is `complete`.
+
+    ```bash
+    curl https://api.baag.cc/v1/checkout/sessions/cs_… \
+      -H "Authorization: Bearer sk_live_xxxxxxxxx"
+    ```
+  </Step>
+</Steps>
+
+<Warning>Landing on `successUrl` doesn't prove payment. Always check `status` from your server.</Warning>
+
+## Status
+
+<AccordionGroup>
+  <Accordion title="open">
+    Waiting for the buyer to pay.
+
+    ```json
+    { "status": "open", "order": null }
+    ```
+  </Accordion>
+
+  <Accordion title="complete">
+    The buyer paid. `order` holds the order number, what they paid (delivery included) and how they'll get it.
+
+    ```json
+    {
+      "status": "complete",
+      "order": {
+        "orderNumber": "cm8x4p7zt0001l80gq3e6xyz",
+        "amountTotal": 52000,
+        "quantity": 2,
+        "customer": { "name": "Aline", "phone": "250788123456" },
+        "fulfillment": { "method": "DELIVERY", "details": "Kicukiro", "fee": 2000 },
+        "paidAt": "2026-10-09T10:12:41.000Z"
+      }
+    }
+    ```
+  </Accordion>
+
+  <Accordion title="expired">
+    Not paid within 30 minutes. Create a new session if the buyer wants to try again.
+
+    ```json
+    { "status": "expired", "order": null }
+    ```
+  </Accordion>
+</AccordionGroup>
+
+<Note>
+**Rules**
+- One product per session. `quantity` 1–100.
+- Send `size` and `color` exactly as [Get product](/v1/products/get) returns them. Leave them out if the product has none.
+- Stock is checked when you create the session.
+- `customer` pre-fills the checkout form. `metadata` comes back untouched.
+</Note>

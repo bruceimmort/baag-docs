@@ -1,0 +1,99 @@
+---
+title: 'All products'
+openapi: 'GET /v1/products'
+---
+
+Get your store's products, a page at a time.
+
+```method: GET
+https://api.baag.cc/v1/products
+```
+
+## Authorization
+
+Use your **public** or **secret** key.
+
+```bash
+Authorization: Bearer pk_live_xxxxxxxxx
+```
+
+<ParamField header="Authorization" type="string" required>
+  `Bearer` followed by your public or secret key.
+</ParamField>
+
+## Query Parameters
+
+<ParamField query="limit" type="integer" default="20">
+  How many products per page, from 1 to 100. Above 100 returns 100.
+</ParamField>
+
+<ParamField query="cursor" type="string">
+  The `nextCursor` from the previous page. Leave it out for the first page.
+</ParamField>
+
+## Response
+
+Returned with status `200`.
+
+```json
+{
+  "data": [
+    {
+      "slug": "mw6",
+      "name": "Linen Shirt",
+      "priceRange": {
+        "min": 25000,
+        "max": 28000
+      },
+      "isSoldOut": false,
+      "imageUrl": "https://…/mw6-red.jpg",
+      "colors": [
+        {
+          "name": "Red",
+          "hex": "#C0392B"
+        },
+        {
+          "name": "Navy",
+          "hex": "#1F2A44"
+        }
+      ]
+    }
+  ],
+  "nextCursor": "cm8x3a9fd0007l70fh1k2p4qr"
+}
+```
+
+<Note>Newest first. Pass `nextCursor` as `cursor` to get the next page. `null` means it's the last page.</Note>
+
+For one product's full details, use [Get product](/v1/products/get) with its `slug`.
+
+## Error Responses
+
+<AccordionGroup>
+  <Accordion title="Invalid limit">
+    Returned with status `400` when `limit` is below 1 or not a whole number.
+
+    ```json
+    {
+      "error": {
+        "code": "invalid_limit",
+        "message": "limit must be a whole number from 1 to 100."
+      }
+    }
+    ```
+  </Accordion>
+  <Accordion title="Internal error">
+    Returned with status `500` when something went wrong on Baag's side. Retry.
+
+    ```json
+    {
+      "error": {
+        "code": "internal_error",
+        "message": "Something went wrong on our side. Please try again."
+      }
+    }
+    ```
+  </Accordion>
+</AccordionGroup>
+
+Key errors (`401`, `403`, `429`) are on [API keys](/authentication#key-errors).

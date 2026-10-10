@@ -1,0 +1,59 @@
+---
+title: 'All collections'
+openapi: 'GET /v1/collections'
+---
+
+Get all your store's collections.
+
+```method: GET
+https://api.baag.cc/v1/collections
+```
+
+## Authorization
+
+Use your **public** or **secret** key.
+
+```bash
+Authorization: Bearer pk_live_xxxxxxxxx
+```
+
+<ParamField header="Authorization" type="string" required>
+  `Bearer` followed by your public or secret key.
+</ParamField>
+
+## Response
+
+Returned with status `200`.
+
+```json
+{
+  "data": [
+    {
+      "id": "cm8x2k1qv0003l70f9h2d5abc",
+      "name": "New arrivals",
+      "imageUrl": "https://…/new-arrivals.jpg"
+    }
+  ]
+}
+```
+
+<Note>All collections come in one list, newest first. Keep the `id` to get a [collection's products](/v1/collections/products).</Note>
+
+## Error Responses
+
+<AccordionGroup>
+  <Accordion title="Internal error">
+    Returned with status `500` when something went wrong on Baag's side. Retry.
+
+    ```json
+    {
+      "error": {
+        "code": "internal_error",
+        "message": "Something went wrong on our side. Please try again."
+      }
+    }
+    ```
+  </Accordion>
+</AccordionGroup>
+
+Key errors (`401`, `403`, `429`) are on [API keys](/authentication#key-errors).

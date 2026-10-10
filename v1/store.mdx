@@ -1,0 +1,103 @@
+---
+title: 'Get store'
+openapi: 'GET /v1/store'
+---
+
+Get your store's name, logo, banner, contact details, socials and policies.
+
+```method: GET
+https://api.baag.cc/v1/store
+```
+
+## Authorization
+
+Use your **public** or **secret** key.
+
+```bash
+Authorization: Bearer pk_live_xxxxxxxxx
+```
+
+<ParamField header="Authorization" type="string" required>
+  `Bearer` followed by your public or secret key.
+</ParamField>
+
+## Response
+
+Returned with status `200`.
+
+```json
+{
+  "name": "Kigali Threads",
+  "url": "https://kigalithreads.baag.cc",
+  "currency": "RWF",
+  "logo": {
+    "url": "https://…/logo.png",
+    "thumbnailUrl": "https://…/logo-small.png"
+  },
+  "banner": {
+    "imageUrl": "https://…/banner.jpg",
+    "color": "#5046FF"
+  },
+  "contact": {
+    "phone": "250788123456",
+    "email": "hello@kigalithreads.rw",
+    "whatsapp": "250788123456"
+  },
+  "socials": {
+    "instagram": null,
+    "facebook": null,
+    "twitter": null,
+    "tiktok": null
+  },
+  "policy": {
+    "delivery": {
+      "free": false,
+      "price": 2000,
+      "type": "NEXT_DAY",
+      "days": []
+    },
+    "pickup": {
+      "available": true,
+      "details": "Kigali Heights, 2nd floor"
+    },
+    "refunds": {
+      "accepted": true,
+      "timeframe": "DAYS_7",
+      "partialOnly": false,
+      "partialPercentage": null
+    },
+    "returns": {
+      "accepted": true,
+      "kind": "EXCHANGE",
+      "timeframe": "DAYS_7",
+      "customerPays": true,
+      "fee": 1000
+    }
+  }
+}
+```
+
+**Note:**
+
+- `url` is the store's custom domain when one is connected, otherwise `https://<store>.baag.cc`.
+- `logo`, and any contact or social value, is `null` when the store hasn't set it.
+- `policy` is `null` until the store sets one. Prices in it are RWF.
+
+## Error Responses
+
+<AccordionGroup>
+  <Accordion title="Internal error">
+    Returned with status `500` when something went wrong on Baag's side. Retry.
+
+    ```json
+    {
+      "error": {
+        "code": "internal_error",
+        "message": "Something went wrong on our side. Please try again."
+      }
+    }
+    ```
+  </Accordion>
+</AccordionGroup>
+
+Key errors (`401`, `403`, `429`) are on [API keys](/authentication#key-errors).

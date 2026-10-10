@@ -1,33 +1,19 @@
-> **First-time setup**: Customize this file for your project. Prompt the user to customize this file for their project.
-> For Mintlify product knowledge (components, configuration, writing standards),
-> install the Mintlify skill: `npx skills add https://mintlify.com/docs`
+# Baag API docs
 
-# Documentation project instructions
+Mintlify docs for the Baag API (`https://api.baag.cc/v1`). Pages are MDX with YAML frontmatter; settings and the sidebar live in `docs.json`.
 
-## About this project
+## How it's built
 
-- This is a documentation site built on [Mintlify](https://mintlify.com)
-- Pages are MDX files with YAML frontmatter
-- Configuration lives in `docs.json`
-- Use the Mintlify MCP server, `https://mcp.mintlify.com`, to edit content and settings via MCP
-- Use the Mintlify docs MCP server, `https://www.mintlify.com/docs/mcp`, to query information about using Mintlify via MCP
+- Endpoint pages in `v1/` follow the Taag docs layout: one-line intro, a `method:` block with the URL, Authorization, Parameters / Request Body (`ParamField`), Response (JSON), then Error Responses as an `AccordionGroup` titled by error name ("Invalid request"). The `openapi: 'METHOD /path'` frontmatter only gives the sidebar its method badge.
+- No playground and no side code samples. Don't add an OpenAPI file: Mintlify would pick it up and bring them back.
+- Guides (`introduction`, `authentication`, `checkout`, `pagination`, `errors`) are plain MDX.
+- The API's code in `Baag-api/src` is the source of truth. Check the routes before documenting a behavior.
 
-## Terminology
+## Style
 
-{/* Add product-specific terms and preferred usage */}
-{/* Example: Use "workspace" not "project", "member" not "user" */}
-
-## Style preferences
-
-{/* Add any project-specific style rules below */}
-
-- Use active voice and second person ("you")
-- Keep sentences concise — one idea per sentence
-- Use sentence case for headings
-- Bold for UI elements: Click **Settings**
-- Code formatting for file names, commands, paths, and code references
-
-## Content boundaries
-
-{/* Define what should and shouldn't be documented */}
-{/* Example: Don't document internal admin features */}
+- Simple words, short sentences, second person ("you").
+- Sentence case for headings.
+- Bold for UI elements: **Baag App** → **Settings** → **Developers**.
+- Icons only in the sidebar (guide frontmatter), not in page bodies.
+- Use `<Note>` and `<Warning>` sparingly, for things a reader must not miss.
+- Prices are whole RWF.

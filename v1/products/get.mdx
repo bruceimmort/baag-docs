@@ -1,0 +1,143 @@
+---
+title: 'Get product'
+openapi: 'GET /v1/products/{slug}'
+---
+
+Get one product with its images, sizes, variants, prices and stock.
+
+```method: GET
+https://api.baag.cc/v1/products/{slug}
+```
+
+## Authorization
+
+Use your **public** or **secret** key.
+
+```bash
+Authorization: Bearer pk_live_xxxxxxxxx
+```
+
+<ParamField header="Authorization" type="string" required>
+  `Bearer` followed by your public or secret key.
+</ParamField>
+
+## Path Parameters
+
+<ParamField path="slug" type="string" required>
+  The product's `slug`, from [All products](/v1/products/list).
+</ParamField>
+
+## Response
+
+Returned with status `200`.
+
+```json
+{
+  "slug": "mw6",
+  "name": "Linen Shirt",
+  "priceRange": {
+    "min": 25000,
+    "max": 28000
+  },
+  "isSoldOut": false,
+  "imageUrl": "https://…/mw6-red.jpg",
+  "colors": [
+    {
+      "name": "Red",
+      "hex": "#C0392B"
+    },
+    {
+      "name": "Navy",
+      "hex": "#1F2A44"
+    }
+  ],
+  "description": "Breathable linen, cut for Kigali heat.",
+  "availableQuantity": 12,
+  "images": [
+    {
+      "url": "https://…/mw6-red.jpg",
+      "thumbnailUrl": "https://…/mw6-red-small.jpg",
+      "colorName": "Red"
+    },
+    {
+      "url": "https://…/mw6-navy.jpg",
+      "thumbnailUrl": "https://…/mw6-navy-small.jpg",
+      "colorName": "Navy"
+    }
+  ],
+  "sizes": [
+    "M",
+    "L"
+  ],
+  "variants": [
+    {
+      "size": "M",
+      "colorName": "Red",
+      "price": 25000,
+      "availableQuantity": 3,
+      "isSoldOut": false
+    },
+    {
+      "size": "L",
+      "colorName": "Red",
+      "price": 28000,
+      "availableQuantity": 4,
+      "isSoldOut": false
+    },
+    {
+      "size": "M",
+      "colorName": "Navy",
+      "price": 25000,
+      "availableQuantity": 5,
+      "isSoldOut": false
+    },
+    {
+      "size": "L",
+      "colorName": "Navy",
+      "price": 28000,
+      "availableQuantity": 0,
+      "isSoldOut": true
+    }
+  ]
+}
+```
+
+<Note>
+**Variants**
+
+- A **variant** is one size and color combination, with its own `price` and stock.
+- Only sizes or only colors: the missing one is `null`. No sizes or colors: `variants` is empty.
+- At checkout, send the variant's `size` and `colorName` as `size` and `color`.
+- `availableQuantity: null` means stock isn't tracked (no limit). Use `isSoldOut`.
+</Note>
+
+## Error Responses
+
+<AccordionGroup>
+  <Accordion title="Product not found">
+    Returned with status `404` when there's no product with this slug in the store, or it's archived.
+
+    ```json
+    {
+      "error": {
+        "code": "product_not_found",
+        "message": "No product with the slug \"mw6\"."
+      }
+    }
+    ```
+  </Accordion>
+  <Accordion title="Internal error">
+    Returned with status `500` when something went wrong on Baag's side. Retry.
+
+    ```json
+    {
+      "error": {
+        "code": "internal_error",
+        "message": "Something went wrong on our side. Please try again."
+      }
+    }
+    ```
+  </Accordion>
+</AccordionGroup>
+
+Key errors (`401`, `403`, `429`) are on [API keys](/authentication#key-errors).

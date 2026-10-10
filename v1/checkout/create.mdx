@@ -1,0 +1,204 @@
+---
+title: 'Initiate checkout'
+openapi: 'POST /v1/checkout/sessions'
+---
+
+Start a checkout for one product, then send the buyer to the `url` you get back. Full flow: [Checkout](/checkout-flow).
+
+```method: POST
+https://api.baag.cc/v1/checkout/sessions
+```
+
+## Authorization
+
+Use your **public** or **secret** key.
+
+```bash
+Authorization: Bearer pk_live_xxxxxxxxx
+```
+
+<ParamField header="Authorization" type="string" required>
+  `Bearer` followed by your public or secret key.
+</ParamField>
+
+## Request Body
+
+```json
+{
+  "items": [
+    {
+      "product": "mw6",
+      "size": "M",
+      "color": "Red",
+      "quantity": 2
+    }
+  ],
+  "successUrl": "https://yoursite.com/thanks",
+  "cancelUrl": "https://yoursite.com/cart",
+  "customer": {
+    "name": "Aline",
+    "phone": "250788123456",
+    "deliveryAddress": "Kicukiro"
+  },
+  "metadata": {
+    "cartId": "abc123"
+  }
+}
+```
+
+<ParamField body="items" type="object[]" required>
+  Exactly **one** product for now.
+
+  <Expandable title="item">
+    <ParamField body="product" type="string" required>
+      The product's `slug`.
+    </ParamField>
+    <ParamField body="size" type="string">
+      A size from the product's `sizes`, spelled exactly. Leave it out if the product has none.
+    </ParamField>
+    <ParamField body="color" type="string">
+      A color `name` from the product's `colors`, spelled exactly. Leave it out if the product has none.
+    </ParamField>
+    <ParamField body="quantity" type="integer" default="1">
+      From 1 to 100.
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+<ParamField body="successUrl" type="string" required>
+  Where the buyer lands after paying, with `?session_id=cs_…` added. Must start with `http://` or `https://`.
+</ParamField>
+
+<ParamField body="cancelUrl" type="string" required>
+  Where the buyer goes if they leave without paying. Must start with `http://` or `https://`.
+</ParamField>
+
+<ParamField body="customer" type="object">
+  Pre-fills the checkout form. The buyer can still change it.
+
+  <Expandable title="customer">
+    <ParamField body="name" type="string">
+      Up to 100 characters.
+    </ParamField>
+    <ParamField body="phone" type="string">
+      Rwandan mobile number as `2507XXXXXXXX`, no `+` or spaces.
+    </ParamField>
+    <ParamField body="deliveryAddress" type="string">
+      Up to 500 characters.
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+<ParamField body="metadata" type="object">
+  Your own references, like a cart id. Up to 20 keys, string values up to 500 characters. Comes back untouched.
+</ParamField>
+
+## Response
+
+Returned with status `201`. Send the buyer to `url`.
+
+```json
+{
+  "id": "cs_q3Lw9vX2bTn8YkPz4RfA1sJd",
+  "url": "https://checkout.baag.cc/cs_q3Lw9vX2bTn8YkPz4RfA1sJd",
+  "status": "open",
+  "items": [
+    {
+      "product": "mw6",
+      "name": "Linen Shirt",
+      "size": "M",
+      "color": "Red",
+      "quantity": 2
+    }
+  ],
+  "successUrl": "https://yoursite.com/thanks",
+  "cancelUrl": "https://yoursite.com/cart",
+  "metadata": {
+    "cartId": "abc123"
+  },
+  "expiresAt": "2026-10-09T10:30:00.000Z",
+  "createdAt": "2026-10-09T10:00:00.000Z",
+  "order": null
+}
+```
+
+<Note>The session expires **30 minutes** after it's created.</Note>
+
+## Error Responses
+
+<AccordionGroup>
+  <Accordion title="Invalid request">
+    Returned with status `400` when a field is missing or has a wrong value. The message names the field.
+
+    ```json
+    {
+      "error": {
+        "code": "invalid_request",
+        "message": "successUrl: Invalid url"
+      }
+    }
+    ```
+  </Accordion>
+  <Accordion title="Variant not found">
+    Returned with status `400` when the size and color don't match a variant, or you sent them for a product that has none.
+
+    ```json
+    {
+      "error": {
+        "code": "variant_not_found",
+        "message": "That size and color combination doesn't exist for this product. Check its variants."
+      }
+    }
+    ```
+  </Accordion>
+  <Accordion title="Product not found">
+    Returned with status `404` when there's no product with this slug in the store, or it's archived.
+
+    ```json
+    {
+      "error": {
+        "code": "product_not_found",
+        "message": "No product with the slug \"mw6\"."
+      }
+    }
+    ```
+  </Accordion>
+  <Accordion title="Sold out">
+    Returned with status `409` when the product, or the size and color picked, is sold out.
+
+    ```json
+    {
+      "error": {
+        "code": "sold_out",
+        "message": "Red / M is sold out."
+      }
+    }
+    ```
+  </Accordion>
+  <Accordion title="Insufficient stock">
+    Returned with status `409` when the buyer asked for more than what's left. The message says how many are left.
+
+    ```json
+    {
+      "error": {
+        "code": "insufficient_stock",
+        "message": "Only 1 left in stock."
+      }
+    }
+    ```
+  </Accordion>
+  <Accordion title="Internal error">
+    Returned with status `500` when something went wrong on Baag's side. Retry.
+
+    ```json
+    {
+      "error": {
+        "code": "internal_error",
+        "message": "Something went wrong on our side. Please try again."
+      }
+    }
+    ```
+  </Accordion>
+</AccordionGroup>
+
+Key errors (`401`, `403`, `429`) are on [API keys](/authentication#key-errors).

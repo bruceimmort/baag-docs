@@ -1,0 +1,223 @@
+---
+title: "Errors"
+description: "Every error has the same shape."
+icon: "triangle-exclamation"
+---
+
+```json
+{
+  "error": {
+    "code": "product_not_found",
+    "message": "No product with the slug \"mw6\"."
+  }
+}
+```
+
+**Note:** check `code` in your code. `message` is for people and may change.
+
+## Any endpoint
+
+<AccordionGroup>
+  <Accordion title="Missing API key">
+    Returned with status `401` when there's no `Authorization` header.
+
+    ```json
+    {
+      "error": {
+        "code": "missing_api_key",
+        "message": "Send your API key as: Authorization: Bearer <key>."
+      }
+    }
+    ```
+  </Accordion>
+  <Accordion title="Invalid API key">
+    Returned with status `401` when the key is wrong, or it was regenerated in Baag App.
+
+    ```json
+    {
+      "error": {
+        "code": "invalid_api_key",
+        "message": "That API key isn't valid. It may have been regenerated."
+      }
+    }
+    ```
+  </Accordion>
+  <Accordion title="Plan required">
+    Returned with status `403` when the store's plan doesn't include API access. The keys work again once the store is back on the **Basic** plan.
+
+    ```json
+    {
+      "error": {
+        "code": "plan_required",
+        "message": "This store's plan doesn't include API access."
+      }
+    }
+    ```
+  </Accordion>
+  <Accordion title="Not found">
+    Returned with status `404` when there's no endpoint at this path.
+
+    ```json
+    {
+      "error": {
+        "code": "not_found",
+        "message": "There's no endpoint at this path."
+      }
+    }
+    ```
+  </Accordion>
+  <Accordion title="Rate limited">
+    Returned with status `429` when the key sent too many requests in a short time. Wait a moment, then retry.
+
+    ```json
+    {
+      "error": {
+        "code": "rate_limited",
+        "message": "Too many requests. Slow down and try again shortly."
+      }
+    }
+    ```
+  </Accordion>
+  <Accordion title="Internal error">
+    Returned with status `500` when something went wrong on Baag's side. Retry.
+
+    ```json
+    {
+      "error": {
+        "code": "internal_error",
+        "message": "Something went wrong on our side. Please try again."
+      }
+    }
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Products and collections
+
+<AccordionGroup>
+  <Accordion title="Invalid limit">
+    Returned with status `400` when `limit` is below 1 or not a whole number.
+
+    ```json
+    {
+      "error": {
+        "code": "invalid_limit",
+        "message": "limit must be a whole number from 1 to 100."
+      }
+    }
+    ```
+  </Accordion>
+  <Accordion title="Product not found">
+    Returned with status `404` when there's no product with this slug in the store, or it's archived.
+
+    ```json
+    {
+      "error": {
+        "code": "product_not_found",
+        "message": "No product with the slug \"mw6\"."
+      }
+    }
+    ```
+  </Accordion>
+  <Accordion title="Collection not found">
+    Returned with status `404` when there's no collection with this id in the store.
+
+    ```json
+    {
+      "error": {
+        "code": "collection_not_found",
+        "message": "No collection with the id \"cm8x2k1qv0003l70f9h2d5abc\"."
+      }
+    }
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Checkout
+
+<AccordionGroup>
+  <Accordion title="Invalid request">
+    Returned with status `400` when a field is missing or has a wrong value. The message names the field.
+
+    ```json
+    {
+      "error": {
+        "code": "invalid_request",
+        "message": "successUrl: Invalid url"
+      }
+    }
+    ```
+  </Accordion>
+  <Accordion title="Variant not found">
+    Returned with status `400` when the size and color don't match a variant, or you sent them for a product that has none.
+
+    ```json
+    {
+      "error": {
+        "code": "variant_not_found",
+        "message": "That size and color combination doesn't exist for this product. Check its variants."
+      }
+    }
+    ```
+  </Accordion>
+  <Accordion title="Secret key required">
+    Returned with status `403` when you used your public key. Call this endpoint from your server with your secret key.
+
+    ```json
+    {
+      "error": {
+        "code": "secret_key_required",
+        "message": "Use your secret key, from your server, to read a checkout session."
+      }
+    }
+    ```
+  </Accordion>
+  <Accordion title="Product not found">
+    Returned with status `404` when there's no product with this slug in the store, or it's archived.
+
+    ```json
+    {
+      "error": {
+        "code": "product_not_found",
+        "message": "No product with the slug \"mw6\"."
+      }
+    }
+    ```
+  </Accordion>
+  <Accordion title="Session not found">
+    Returned with status `404` when there's no checkout session with this id in the store.
+
+    ```json
+    {
+      "error": {
+        "code": "session_not_found",
+        "message": "No checkout session with the id \"cs_q3Lw9vX2bTn8YkPz4RfA1sJd\"."
+      }
+    }
+    ```
+  </Accordion>
+  <Accordion title="Sold out">
+    Returned with status `409` when the product, or the size and color picked, is sold out.
+
+    ```json
+    {
+      "error": {
+        "code": "sold_out",
+        "message": "Red / M is sold out."
+      }
+    }
+    ```
+  </Accordion>
+  <Accordion title="Insufficient stock">
+    Returned with status `409` when the buyer asked for more than what's left. The message says how many are left.
+
+    ```json
+    {
+      "error": {
+        "code": "insufficient_stock",
+        "message": "Only 1 left in stock."
+      }
+    }
+    ```
+  </Accordion>
+</AccordionGroup>

@@ -1,0 +1,120 @@
+---
+title: 'Verify payment'
+openapi: 'GET /v1/checkout/sessions/{id}'
+---
+
+Check from your server that a buyer has paid. Paid when `status` is `complete`.
+
+```method: GET
+https://api.baag.cc/v1/checkout/sessions/{id}
+```
+
+## Authorization
+
+Use your **secret key**, from your server.
+
+```bash
+Authorization: Bearer sk_live_xxxxxxxxx
+```
+
+<ParamField header="Authorization" type="string" required>
+  `Bearer` followed by your secret key. A public key returns **Secret key required**.
+</ParamField>
+
+## Path Parameters
+
+<ParamField path="id" type="string" required>
+  The session `id`. It's also the `session_id` on your `successUrl`.
+</ParamField>
+
+## Response
+
+Returned with status `200`.
+
+```json
+{
+  "id": "cs_q3Lw9vX2bTn8YkPz4RfA1sJd",
+  "url": "https://checkout.baag.cc/cs_q3Lw9vX2bTn8YkPz4RfA1sJd",
+  "status": "complete",
+  "items": [
+    {
+      "product": "mw6",
+      "name": "Linen Shirt",
+      "size": "M",
+      "color": "Red",
+      "quantity": 2
+    }
+  ],
+  "successUrl": "https://yoursite.com/thanks",
+  "cancelUrl": "https://yoursite.com/cart",
+  "metadata": {
+    "cartId": "abc123"
+  },
+  "expiresAt": "2026-10-09T10:30:00.000Z",
+  "createdAt": "2026-10-09T10:00:00.000Z",
+  "order": {
+    "orderNumber": "cm8x4p7zt0001l80gq3e6xyz",
+    "amountTotal": 52000,
+    "quantity": 2,
+    "customer": {
+      "name": "Aline",
+      "phone": "250788123456"
+    },
+    "fulfillment": {
+      "method": "DELIVERY",
+      "details": "Kicukiro",
+      "fee": 2000
+    },
+    "paidAt": "2026-10-09T10:12:41.000Z"
+  }
+}
+```
+
+**Note:**
+
+- `status`: `open` (waiting), `complete` (paid) or `expired` (not paid within 30 minutes).
+- `order` is `null` until the buyer pays. `amountTotal` includes delivery.
+- Landing on `successUrl` doesn't prove payment. Always check `status` here.
+
+## Error Responses
+
+<AccordionGroup>
+  <Accordion title="Secret key required">
+    Returned with status `403` when you used your public key. Call this endpoint from your server with your secret key.
+
+    ```json
+    {
+      "error": {
+        "code": "secret_key_required",
+        "message": "Use your secret key, from your server, to read a checkout session."
+      }
+    }
+    ```
+  </Accordion>
+  <Accordion title="Session not found">
+    Returned with status `404` when there's no checkout session with this id in the store.
+
+    ```json
+    {
+      "error": {
+        "code": "session_not_found",
+        "message": "No checkout session with the id \"cs_q3Lw9vX2bTn8YkPz4RfA1sJd\"."
+      }
+    }
+    ```
+  </Accordion>
+  <Accordion title="Internal error">
+    Returned with status `500` when something went wrong on Baag's side. Retry.
+
+    ```json
+    {
+      "error": {
+        "code": "internal_error",
+        "message": "Something went wrong on our side. Please try again."
+      }
+    }
+    ```
+  </Accordion>
+</AccordionGroup>
+
+Key errors (`401`, `403`, `429`) are on [API keys](/authentication#key-errors).
