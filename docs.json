@@ -2,6 +2,11 @@
   "$schema": "https://mintlify.com/docs.json",
   "theme": "maple",
   "name": "Baag",
+  "logo": {
+    "light": "/logo/light.svg",
+    "dark": "/logo/dark.svg",
+    "href": "https://baag.cc"
+  },
   "appearance": {
     "default": "light",
     "strict": true
@@ -21,36 +26,33 @@
             "group": "Get started",
             "pages": [
               "introduction",
-              "authentication",
-              "checkout-flow",
-              "errors"
+              "authentication"
             ]
           },
           {
             "group": "Store",
             "pages": [
-              "v1/store"
+              "store"
             ]
           },
           {
             "group": "Products",
             "pages": [
-              "v1/products/list",
-              "v1/products/get"
+              "products/list",
+              "products/get"
             ]
           },
           {
             "group": "Collections",
             "pages": [
-              "v1/collections/list",
-              "v1/collections/products"
+              "collections/list",
+              "collections/get"
             ]
           },
           {
             "group": "Checkout",
             "pages": [
-              "v1/checkout/create",
-              "v1/checkout/get"
+              "checkout/create"
             ]
           }
         ]

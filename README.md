@@ -16,8 +16,9 @@ Run it from this folder, where `docs.json` is.
 | | |
 |---|---|
 | `docs.json` | Site settings and the sidebar |
-| `*.mdx` | The "Get started" guides |
-| `v1/` | One page per endpoint, written by hand like the Taag docs |
+| `introduction.mdx`, `authentication.mdx` | The "Get started" guides |
+| `store.mdx`, `products/`, `collections/`, `checkout/` | One page per endpoint, written by hand like the Taag docs |
+| `logo/`, `imgs/` | Logo and screenshots |
 
 ## Before you push
 

@@ -1,0 +1,234 @@
+---
+title: 'Initiate checkout'
+openapi: 'POST /checkout/sessions'
+---
+
+You can use this endpoint to start a checkout when a buyer is ready to pay. You tell Baag which product they picked, and Baag gives you back a link to a checkout page that we host for you. The buyer fills in their details and pays there, so you never handle the payment yourself.
+
+```method: POST
+https://api.baag.cc/v1/checkout/sessions
+```
+
+## Authorization
+
+All you need is your **API key** in the `Authorization` header.
+
+```bash
+Authorization: Bearer pk_live_xxxxxxxxx
+```
+
+<ParamField header="Authorization" type="string" required>
+  `Bearer`, a space, then your API key. You can find it in **Baag App** → **Settings** → **Developers**.
+</ParamField>
+
+## Request Body
+
+All you need to send is the product the buyer picked, in `items`:
+
+```json
+{
+  "items": [
+    {
+      "product": "mw6",
+      "size": "M",
+      "color": "Red",
+      "quantity": 2
+    }
+  ]
+}
+```
+
+<ParamField body="items" type="object[]" required>
+  The product the buyer wants. For now, it holds exactly **one** product.
+
+  <Expandable title="item">
+    <ParamField body="product" type="string" required>
+      The product's `slug`, from [All products](/products/list) or [Get product](/products/get).
+    </ParamField>
+    <ParamField body="size" type="string">
+      The `size` of the variant the buyer picked, spelled exactly as [Get product](/products/get) returns it. Leave it out when the product has no sizes.
+    </ParamField>
+    <ParamField body="color" type="string">
+      The `colorName` of the variant the buyer picked, spelled exactly as [Get product](/products/get) returns it. Leave it out when the product has no colors.
+    </ParamField>
+    <ParamField body="quantity" type="integer" default="1">
+      How many the buyer wants, from 1 to 100.
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+You don't need to send the buyer's name, phone or address. They enter those themselves on the checkout page.
+
+## Response
+
+When everything goes well, you get back status `201` with the link to the checkout page:
+
+```json
+{
+  "url": "https://checkout.baag.cc/cs_q3Lw9vX2bTn8YkPz4RfA1sJd"
+}
+```
+
+Send the buyer to this `url`. For example, from your website:
+
+```javascript
+const response = await fetch("https://api.baag.cc/v1/checkout/sessions", {
+  method: "POST",
+  headers: {
+    Authorization: "Bearer pk_live_xxxxxxxxx",
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
+    items: [{ product: "mw6", size: "M", color: "Red", quantity: 2 }],
+  }),
+});
+const { url } = await response.json();
+
+window.location.href = url;
+```
+
+Here is what happens next:
+
+- The buyer fills in their details on the checkout page and pays.
+- The checkout page shows them the result. When they're done, they close the page. They aren't sent back to your website.
+- The order shows up in **Baag App**, like any other order.
+
+<Note>
+The link works for **30 minutes**. If the buyer doesn't pay in time, start a new checkout. Stock is checked when you start the checkout, so a sold-out product or variant can't be bought.
+</Note>
+
+## Error Responses
+
+<AccordionGroup>
+  <Accordion title="Invalid request">
+    Returned with status `400` when a field is missing or has a wrong value, like more than one product in `items` or a `quantity` above 100. The message names the field.
+
+    ```json
+    {
+      "error": {
+        "code": "invalid_request",
+        "message": "items: items must hold exactly one product for now"
+      }
+    }
+    ```
+  </Accordion>
+  <Accordion title="Variant not found">
+    Returned with status `400` when the `size` and `color` you sent don't match any of the product's variants. Check the spelling against the product's `variants` in [Get product](/products/get).
+
+    ```json
+    {
+      "error": {
+        "code": "variant_not_found",
+        "message": "That size and color combination doesn't exist for this product. Check its variants."
+      }
+    }
+    ```
+
+    You also get it when you sent a `size` or `color` for a product that has none. Leave them out:
+
+    ```json
+    {
+      "error": {
+        "code": "variant_not_found",
+        "message": "This product has no sizes or colors; leave them out."
+      }
+    }
+    ```
+  </Accordion>
+  <Accordion title="Product not found">
+    Returned with status `404` when there's no product with this slug in your store, or it's archived. Check the slug in [All products](/products/list).
+
+    ```json
+    {
+      "error": {
+        "code": "product_not_found",
+        "message": "No product with the slug \"mw6\"."
+      }
+    }
+    ```
+  </Accordion>
+  <Accordion title="Sold out">
+    Returned with status `409` when the product, or the size and color the buyer picked, is sold out. Let the buyer know, or offer them another option.
+
+    ```json
+    {
+      "error": {
+        "code": "sold_out",
+        "message": "Red / M is sold out."
+      }
+    }
+    ```
+  </Accordion>
+  <Accordion title="Insufficient stock">
+    Returned with status `409` when the buyer asked for more than what's left. The message says how many are left, so you can lower the `quantity`.
+
+    ```json
+    {
+      "error": {
+        "code": "insufficient_stock",
+        "message": "Only 1 left in stock."
+      }
+    }
+    ```
+  </Accordion>
+  <Accordion title="Missing API key">
+    Returned with status `401` when the request has no `Authorization` header. Add your key as `Authorization: Bearer pk_live_xxxxxxxxx`.
+
+    ```json
+    {
+      "error": {
+        "code": "missing_api_key",
+        "message": "Send your API key as: Authorization: Bearer <key>."
+      }
+    }
+    ```
+  </Accordion>
+  <Accordion title="Invalid API key">
+    Returned with status `401` when the key is wrong, or it was regenerated in **Baag App**. Copy your key again from **Settings** → **Developers**.
+
+    ```json
+    {
+      "error": {
+        "code": "invalid_api_key",
+        "message": "That API key isn't valid. It may have been regenerated."
+      }
+    }
+    ```
+  </Accordion>
+  <Accordion title="Plan required">
+    Returned with status `403` when your store's plan doesn't include the API. Your key works again as soon as your store is on the **Basic** or **Pro** plan.
+
+    ```json
+    {
+      "error": {
+        "code": "plan_required",
+        "message": "This store's plan doesn't include API access."
+      }
+    }
+    ```
+  </Accordion>
+  <Accordion title="Rate limited">
+    Returned with status `429` when your key sent too many requests in a short time. Wait a moment, then try again.
+
+    ```json
+    {
+      "error": {
+        "code": "rate_limited",
+        "message": "Too many requests. Slow down and try again shortly."
+      }
+    }
+    ```
+  </Accordion>
+  <Accordion title="Internal error">
+    Returned with status `500` when something went wrong on Baag's side. It's not your fault. Wait a moment, then try again.
+
+    ```json
+    {
+      "error": {
+        "code": "internal_error",
+        "message": "Something went wrong on our side. Please try again."
+      }
+    }
+    ```
+  </Accordion>
+</AccordionGroup>

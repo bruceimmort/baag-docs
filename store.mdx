@@ -1,0 +1,153 @@
+---
+title: 'Get store'
+openapi: 'GET /store'
+---
+
+You can use this endpoint to get all of your store's information from Baag: its name, logo and banner, your contact details and socials, and the delivery, pickup, refund and return policies you set in **Baag App**. It's handy for your website's header, footer and policy pages.
+
+```method: GET
+https://api.baag.cc/v1/store
+```
+
+## Authorization
+
+All you need is your **API key** in the `Authorization` header.
+
+```bash
+Authorization: Bearer pk_live_xxxxxxxxx
+```
+
+<ParamField header="Authorization" type="string" required>
+  `Bearer`, a space, then your API key. You can find it in **Baag App** → **Settings** → **Developers**.
+</ParamField>
+
+## Response
+
+When everything goes well, you get back status `200` with your store's information:
+
+```json
+{
+  "name": "Kigali Threads",
+  "url": "https://kigalithreads.baag.cc",
+  "currency": "RWF",
+  "logo": {
+    "url": "https://…/logo.png",
+    "thumbnailUrl": "https://…/logo-small.png"
+  },
+  "banner": {
+    "imageUrl": "https://…/banner.jpg",
+    "color": "#5046FF"
+  },
+  "contact": {
+    "phone": "250788123456",
+    "email": "hello@kigalithreads.rw",
+    "whatsapp": "250788123456"
+  },
+  "socials": {
+    "instagram": null,
+    "facebook": null,
+    "twitter": null,
+    "tiktok": null
+  },
+  "policy": {
+    "delivery": {
+      "free": false,
+      "price": 2000,
+      "type": "NEXT_DAY",
+      "days": []
+    },
+    "pickup": {
+      "available": true,
+      "details": "Kigali Heights, 2nd floor"
+    },
+    "refunds": {
+      "accepted": true,
+      "timeframe": "DAYS_7",
+      "partialOnly": false,
+      "partialPercentage": null
+    },
+    "returns": {
+      "accepted": true,
+      "kind": "EXCHANGE",
+      "timeframe": "DAYS_7",
+      "customerPays": true,
+      "fee": 1000
+    }
+  }
+}
+```
+
+Here is what each part means:
+
+- `url` is your store's link. It's your own domain when you connected one on the **Pro** plan, otherwise `https://<your-store>.baag.cc`.
+- `logo`, and any contact or social value, is `null` when you haven't added it in **Baag App** yet.
+- `policy` is `null` until you set your policies in **Baag App**. These are the same rules checkout uses, so what you show matches what the buyer gets.
+- `delivery.type` is `SAME_DAY`, `NEXT_DAY` or `CUSTOM_DAYS`. With `CUSTOM_DAYS`, `days` lists the days you deliver.
+- `refunds.timeframe` and `returns.timeframe` are how long a buyer has: `HOURS_24`, `HOURS_48`, `DAYS_7` or `DAYS_14`. Refunds can also be `DAYS_30`.
+- `returns.kind` is `EXCHANGE` when you swap the item, or `RETURN` when you take it back.
+- Prices, like `delivery.price` and `returns.fee`, are whole RWF.
+
+## Error Responses
+
+<AccordionGroup>
+  <Accordion title="Missing API key">
+    Returned with status `401` when the request has no `Authorization` header. Add your key as `Authorization: Bearer pk_live_xxxxxxxxx`.
+
+    ```json
+    {
+      "error": {
+        "code": "missing_api_key",
+        "message": "Send your API key as: Authorization: Bearer <key>."
+      }
+    }
+    ```
+  </Accordion>
+  <Accordion title="Invalid API key">
+    Returned with status `401` when the key is wrong, or it was regenerated in **Baag App**. Copy your key again from **Settings** → **Developers**.
+
+    ```json
+    {
+      "error": {
+        "code": "invalid_api_key",
+        "message": "That API key isn't valid. It may have been regenerated."
+      }
+    }
+    ```
+  </Accordion>
+  <Accordion title="Plan required">
+    Returned with status `403` when your store's plan doesn't include the API. Your key works again as soon as your store is on the **Basic** or **Pro** plan.
+
+    ```json
+    {
+      "error": {
+        "code": "plan_required",
+        "message": "This store's plan doesn't include API access."
+      }
+    }
+    ```
+  </Accordion>
+  <Accordion title="Rate limited">
+    Returned with status `429` when your key sent too many requests in a short time. Wait a moment, then try again.
+
+    ```json
+    {
+      "error": {
+        "code": "rate_limited",
+        "message": "Too many requests. Slow down and try again shortly."
+      }
+    }
+    ```
+  </Accordion>
+  <Accordion title="Internal error">
+    Returned with status `500` when something went wrong on Baag's side. It's not your fault. Wait a moment, then try again.
+
+    ```json
+    {
+      "error": {
+        "code": "internal_error",
+        "message": "Something went wrong on our side. Please try again."
+      }
+    }
+    ```
+  </Accordion>
+</AccordionGroup>

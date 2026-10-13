@@ -1,0 +1,191 @@
+---
+title: 'Get product'
+openapi: 'GET /products/{slug}'
+---
+
+You can use this endpoint to get everything about one product: its description, all its photos, its sizes and colors, the price of each option and how many are left. It's what you need for a product page.
+
+```method: GET
+https://api.baag.cc/v1/products/{slug}
+```
+
+## Authorization
+
+All you need is your **API key** in the `Authorization` header.
+
+```bash
+Authorization: Bearer pk_live_xxxxxxxxx
+```
+
+<ParamField header="Authorization" type="string" required>
+  `Bearer`, a space, then your API key. You can find it in **Baag App** → **Settings** → **Developers**.
+</ParamField>
+
+## Path Parameters
+
+<ParamField path="slug" type="string" required>
+  The product's `slug`. You can find it in [All products](/products/list). For example, `https://api.baag.cc/v1/products/mw6`.
+</ParamField>
+
+## Response
+
+When everything goes well, you get back status `200` with the product:
+
+```json
+{
+  "slug": "mw6",
+  "name": "Linen Shirt",
+  "priceRange": {
+    "min": 25000,
+    "max": 28000
+  },
+  "isSoldOut": false,
+  "imageUrl": "https://…/mw6-red.jpg",
+  "colors": [
+    {
+      "name": "Red",
+      "hex": "#C0392B"
+    },
+    {
+      "name": "Navy",
+      "hex": "#1F2A44"
+    }
+  ],
+  "description": "Breathable linen, cut for Kigali heat.",
+  "availableQuantity": 12,
+  "images": [
+    {
+      "url": "https://…/mw6-red.jpg",
+      "thumbnailUrl": "https://…/mw6-red-small.jpg",
+      "colorName": "Red"
+    },
+    {
+      "url": "https://…/mw6-navy.jpg",
+      "thumbnailUrl": "https://…/mw6-navy-small.jpg",
+      "colorName": "Navy"
+    }
+  ],
+  "sizes": [
+    "M",
+    "L"
+  ],
+  "variants": [
+    {
+      "size": "M",
+      "colorName": "Red",
+      "price": 25000,
+      "availableQuantity": 3,
+      "isSoldOut": false
+    },
+    {
+      "size": "L",
+      "colorName": "Red",
+      "price": 28000,
+      "availableQuantity": 4,
+      "isSoldOut": false
+    },
+    {
+      "size": "M",
+      "colorName": "Navy",
+      "price": 25000,
+      "availableQuantity": 5,
+      "isSoldOut": false
+    },
+    {
+      "size": "L",
+      "colorName": "Navy",
+      "price": 28000,
+      "availableQuantity": 0,
+      "isSoldOut": true
+    }
+  ]
+}
+```
+
+Here is what each part means:
+
+- `images` are all the product's photos. `colorName` tells you which color a photo shows, so you can switch photos when the buyer picks a color.
+- `variants` are the options a buyer can pick. Each one is a size and color pair with its own `price` and stock. For example, Red in size M.
+- When a product has only sizes or only colors, the missing one is `null` in its variants. When it has neither, `variants` is empty and the product sells as one item.
+- When the buyer is ready to pay, send the variant's `size` and `colorName` to [Initiate checkout](/checkout/create).
+
+<Note>
+`availableQuantity` is `null` when your store isn't tracking stock for this product. That doesn't mean it's out of stock. To know for sure if a product, or one of its variants, can be bought, always check `isSoldOut`.
+</Note>
+
+## Error Responses
+
+<AccordionGroup>
+  <Accordion title="Product not found">
+    Returned with status `404` when there's no product with this slug in your store, or it's archived. Check the slug in [All products](/products/list).
+
+    ```json
+    {
+      "error": {
+        "code": "product_not_found",
+        "message": "No product with the slug \"mw6\"."
+      }
+    }
+    ```
+  </Accordion>
+  <Accordion title="Missing API key">
+    Returned with status `401` when the request has no `Authorization` header. Add your key as `Authorization: Bearer pk_live_xxxxxxxxx`.
+
+    ```json
+    {
+      "error": {
+        "code": "missing_api_key",
+        "message": "Send your API key as: Authorization: Bearer <key>."
+      }
+    }
+    ```
+  </Accordion>
+  <Accordion title="Invalid API key">
+    Returned with status `401` when the key is wrong, or it was regenerated in **Baag App**. Copy your key again from **Settings** → **Developers**.
+
+    ```json
+    {
+      "error": {
+        "code": "invalid_api_key",
+        "message": "That API key isn't valid. It may have been regenerated."
+      }
+    }
+    ```
+  </Accordion>
+  <Accordion title="Plan required">
+    Returned with status `403` when your store's plan doesn't include the API. Your key works again as soon as your store is on the **Basic** or **Pro** plan.
+
+    ```json
+    {
+      "error": {
+        "code": "plan_required",
+        "message": "This store's plan doesn't include API access."
+      }
+    }
+    ```
+  </Accordion>
+  <Accordion title="Rate limited">
+    Returned with status `429` when your key sent too many requests in a short time. Wait a moment, then try again.
+
+    ```json
+    {
+      "error": {
+        "code": "rate_limited",
+        "message": "Too many requests. Slow down and try again shortly."
+      }
+    }
+    ```
+  </Accordion>
+  <Accordion title="Internal error">
+    Returned with status `500` when something went wrong on Baag's side. It's not your fault. Wait a moment, then try again.
+
+    ```json
+    {
+      "error": {
+        "code": "internal_error",
+        "message": "Something went wrong on our side. Please try again."
+      }
+    }
+    ```
+  </Accordion>
+</AccordionGroup>

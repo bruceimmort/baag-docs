@@ -1,0 +1,140 @@
+---
+title: 'Get collection'
+openapi: 'GET /collections/{id}'
+---
+
+You can use this endpoint to get all the products in one of your collections. It's what you need for a collection page on your website.
+
+```method: GET
+https://api.baag.cc/v1/collections/{id}
+```
+
+## Authorization
+
+All you need is your **API key** in the `Authorization` header.
+
+```bash
+Authorization: Bearer pk_live_xxxxxxxxx
+```
+
+<ParamField header="Authorization" type="string" required>
+  `Bearer`, a space, then your API key. You can find it in **Baag App** → **Settings** → **Developers**.
+</ParamField>
+
+## Path Parameters
+
+<ParamField path="id" type="string" required>
+  The collection's `id`. You can find it in [All collections](/collections/list).
+</ParamField>
+
+## Response
+
+When everything goes well, you get back status `200` with the collection's products in `data`, newest first. Each product looks the same as in [All products](/products/list):
+
+```json
+{
+  "data": [
+    {
+      "slug": "mw6",
+      "name": "Linen Shirt",
+      "priceRange": {
+        "min": 25000,
+        "max": 28000
+      },
+      "isSoldOut": false,
+      "imageUrl": "https://…/mw6-red.jpg",
+      "colors": [
+        {
+          "name": "Red",
+          "hex": "#C0392B"
+        },
+        {
+          "name": "Navy",
+          "hex": "#1F2A44"
+        }
+      ]
+    }
+  ]
+}
+```
+
+To show one product with all its photos, sizes and stock, use [Get product](/products/get) with its `slug`.
+
+<Note>Collections are part of the **Pro** plan. On the **Basic** plan, this endpoint returns **Collection not found**.</Note>
+
+## Error Responses
+
+<AccordionGroup>
+  <Accordion title="Collection not found">
+    Returned with status `404` when there's no collection with this id in your store, or your store isn't on the **Pro** plan. Check the id in [All collections](/collections/list).
+
+    ```json
+    {
+      "error": {
+        "code": "collection_not_found",
+        "message": "No collection with the id \"cm8x2k1qv0003l70f9h2d5abc\"."
+      }
+    }
+    ```
+  </Accordion>
+  <Accordion title="Missing API key">
+    Returned with status `401` when the request has no `Authorization` header. Add your key as `Authorization: Bearer pk_live_xxxxxxxxx`.
+
+    ```json
+    {
+      "error": {
+        "code": "missing_api_key",
+        "message": "Send your API key as: Authorization: Bearer <key>."
+      }
+    }
+    ```
+  </Accordion>
+  <Accordion title="Invalid API key">
+    Returned with status `401` when the key is wrong, or it was regenerated in **Baag App**. Copy your key again from **Settings** → **Developers**.
+
+    ```json
+    {
+      "error": {
+        "code": "invalid_api_key",
+        "message": "That API key isn't valid. It may have been regenerated."
+      }
+    }
+    ```
+  </Accordion>
+  <Accordion title="Plan required">
+    Returned with status `403` when your store's plan doesn't include the API. Your key works again as soon as your store is on the **Basic** or **Pro** plan.
+
+    ```json
+    {
+      "error": {
+        "code": "plan_required",
+        "message": "This store's plan doesn't include API access."
+      }
+    }
+    ```
+  </Accordion>
+  <Accordion title="Rate limited">
+    Returned with status `429` when your key sent too many requests in a short time. Wait a moment, then try again.
+
+    ```json
+    {
+      "error": {
+        "code": "rate_limited",
+        "message": "Too many requests. Slow down and try again shortly."
+      }
+    }
+    ```
+  </Accordion>
+  <Accordion title="Internal error">
+    Returned with status `500` when something went wrong on Baag's side. It's not your fault. Wait a moment, then try again.
+
+    ```json
+    {
+      "error": {
+        "code": "internal_error",
+        "message": "Something went wrong on our side. Please try again."
+      }
+    }
+    ```
+  </Accordion>
+</AccordionGroup>

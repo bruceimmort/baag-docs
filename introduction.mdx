@@ -1,31 +1,35 @@
 ---
 title: "Introduction"
-description: "Show your Baag store on your own website and take payments."
+description: "Show your Baag store on your own website and let buyers pay."
 icon: "book"
 ---
 
+Welcome to the Baag API docs. We hope you already have a Baag store with a few products in it.
+
+If you don't have a store yet, go to [Baag](https://baag.cc) to sign up and add your products, then come back here.
+
+## What you can do with the API
+
+Your Baag store already has its own page on `baag.cc`. With the API, you can show that same store on a website you build yourself, with your own design.
+
+Everything you set up in **Baag App** is there for you to use: your store's name, logo and banner, your contact details and socials, and the delivery, pickup, refund and return policies you chose. You can also show all your products, with their photos, prices, sizes, colors and how many are left, and group them the way you did in your collections.
+
+When a buyer is ready to pay, you don't need to build a payment page. You can ask Baag to start a checkout for the product they picked, and Baag gives you back a link to a checkout page that we host for you. Send the buyer to that link. They fill in their details and pay there, and the order shows up in **Baag App** like any other order.
+
+You never handle the buyer's money or payment details yourself. Baag takes care of that part.
+
+## Before you start
+
+- The API is part of the **Basic** and **Pro** plans. Collections are part of the **Pro** plan only.
+- You will need your API key. It tells Baag which store is calling. [API keys](/authentication) shows you where to find it.
+- Prices are always whole **RWF**. For example, `25000` means 25,000 RWF.
+
 ## Base URL
+
+Every request you make starts with this address:
 
 ```bash
 https://api.baag.cc/v1
 ```
 
-## Endpoints
-
-| Method | Endpoint | Key |
-|:--|:--|:--|
-| `GET` | [`/v1/store`](/v1/store) | Public or secret |
-| `GET` | [`/v1/products`](/v1/products/list) | Public or secret |
-| `GET` | [`/v1/products/{slug}`](/v1/products/get) | Public or secret |
-| `GET` | [`/v1/collections`](/v1/collections/list) | Public or secret |
-| `GET` | [`/v1/collections/{id}/products`](/v1/collections/products) | Public or secret |
-| `POST` | [`/v1/checkout/sessions`](/v1/checkout/create) | Public or secret |
-| `GET` | [`/v1/checkout/sessions/{id}`](/v1/checkout/get) | **Secret only** |
-
-## Note
-
-- The API is part of the **Basic** plan.
-- Prices are whole **RWF**: `25000` = 25,000 RWF.
-- Requests and responses are JSON.
-- Product lists are paged: pass `nextCursor` as `cursor` to get the next page.
-- All errors have one shape: [Errors](/errors).
+Now let's look at your API key, so Baag knows it's you.
