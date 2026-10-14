@@ -19,9 +19,9 @@ a:has(> img.nav-logo)::after {
     color: #000;
 }
 
-/* No search bar */
+/* No search bar. Hide the boxes around it too, but never the one that also holds the page list */
 #search-bar-entry,
 #search-bar-entry-mobile,
-#sidebar-content > div:has(#search-bar-entry) {
+#sidebar-content div:has(#search-bar-entry):not(:has(#navigation-items)) {
     display: none !important;
 }
