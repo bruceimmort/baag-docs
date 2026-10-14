@@ -6,11 +6,7 @@ icon: "key"
 
 You will need an API key for every request you make. It's how Baag knows who you are and which store's products to send back.
 
-Your API key looks like this:
-
-```bash
-pk_live_xxxxxxxxx
-```
+Your API key starts with `pk_live_`, like `pk_live_xxxxxxxxx`.
 
 <Warning>
 **Every request needs your API key.** Without it, Baag doesn't know which store you are, and the request fails. If you regenerate your key in **Baag App**, the old one stops working right away, so update your website with the new one.
@@ -19,47 +15,28 @@ pk_live_xxxxxxxxx
 ## Where to find your API key
 
 <Steps>
-  <Step title="Open Settings">
-    In **Baag App**, open **Settings**.
+  <Step title="Open Settings, then Developers">
+    In **Baag App**, open **Settings**, then click the **Developers** tab. Your API key is right there.
 
     <Frame>
-      <img src="/imgs/api-key-settings.png" alt="Settings in Baag App" width="360" />
-    </Frame>
-  </Step>
-
-  <Step title="Go to Developers">
-    In **Settings**, click **Developers**.
-
-    <Frame>
-      <img src="/imgs/api-key-developers.png" alt="The Developers section in Settings" width="360" />
+      <img src="/imgs/api-key-settings.png" alt="The Developers tab in Settings" width="360" />
     </Frame>
   </Step>
 
   <Step title="Copy your key">
-    Copy the key that starts with `pk_live_`. This is the key you will use everywhere.
+    Click the copy button at the right of the key that starts with `pk_live_`. This is the key you will use everywhere.
+
+    If you ever need a new key, click **Regenerate key**. The old one stops working right away.
 
     <Frame>
-      <img src="/imgs/api-key-copy.png" alt="Copying the API key" width="360" />
+      <img src="/imgs/api-key-developers.png" alt="The API key with its copy button and Regenerate key" width="360" />
     </Frame>
   </Step>
 </Steps>
 
 ## How to send your key
 
-Put your key in the `Authorization` header of each request, after the word `Bearer` and a space:
-
-```bash
-Authorization: Bearer pk_live_xxxxxxxxx
-```
-
-For example, this is how you can get your store's details from your website:
-
-```javascript
-const response = await fetch("https://api.baag.cc/v1/store", {
-  headers: { Authorization: "Bearer pk_live_xxxxxxxxx" },
-});
-const store = await response.json();
-```
+Put your key in the `Authorization` header of each request, after the word `Bearer` and a space, like this: `Authorization: Bearer pk_live_xxxxxxxxx`.
 
 This one key works for every endpoint in these docs, and it's safe to use in your website's code.
 

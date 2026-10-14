@@ -1,4 +1,27 @@
 .nav-logo {
-    height: 32px;
-    max-width: 160px;
+    height: 32px !important;
+    max-width: none;
+}
+
+/* "Baag" wordmark next to the logo */
+a:has(> img.nav-logo) {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+}
+
+a:has(> img.nav-logo)::after {
+    content: "Baag";
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: #000;
+}
+
+/* No search bar */
+#search-bar-entry,
+#search-bar-entry-mobile,
+#sidebar-content > div:has(#search-bar-entry) {
+    display: none !important;
 }

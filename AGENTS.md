@@ -6,6 +6,7 @@ Mintlify docs for the Baag API (`https://api.baag.cc/v1`). Pages are MDX with YA
 
 - Endpoint pages (`store`, `products/`, `collections/`, `checkout/`) follow the Taag docs layout: a short, friendly intro ("You can use this endpoint to…"), a `method:` block with the URL, Authorization, Parameters / Request Body (`ParamField`), Response (JSON), then Error Responses as an `AccordionGroup` titled by error name ("Invalid request"). Each page lists all its own errors, key errors included; there's no separate errors page. The `openapi: 'METHOD /path'` frontmatter (path without `/v1`) only gives the sidebar its method badge.
 - No playground and no side code samples. Don't add an OpenAPI file: Mintlify would pick it up and bring them back.
+- The only code blocks are JSON: request bodies and responses (plus the `method:` URL block). No curl, JavaScript or other code for calling the API. Short values like the header or base URL go inline.
 - Guides (`introduction`, `authentication`) are plain MDX. The introduction explains in words, with no endpoint list.
 - There's one API key (`pk_live_…`) for every endpoint. `sk_live_` keys are rejected.
 - The API's code in `Baag-api/src` is the source of truth. Check the routes before documenting a behavior.

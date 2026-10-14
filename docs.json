@@ -3,8 +3,8 @@
   "theme": "maple",
   "name": "Baag",
   "logo": {
-    "light": "/logo/light.svg",
-    "dark": "/logo/dark.svg",
+    "light": "/blackfavicon.png",
+    "dark": "/blackfavicon.png",
     "href": "https://baag.cc"
   },
   "appearance": {
@@ -18,43 +18,38 @@
   },
   "favicon": "/favicon.png",
   "navigation": {
-    "tabs": [
+    "groups": [
       {
-        "tab": "API Docs",
-        "groups": [
-          {
-            "group": "Get started",
-            "pages": [
-              "introduction",
-              "authentication"
-            ]
-          },
-          {
-            "group": "Store",
-            "pages": [
-              "store"
-            ]
-          },
-          {
-            "group": "Products",
-            "pages": [
-              "products/list",
-              "products/get"
-            ]
-          },
-          {
-            "group": "Collections",
-            "pages": [
-              "collections/list",
-              "collections/get"
-            ]
-          },
-          {
-            "group": "Checkout",
-            "pages": [
-              "checkout/create"
-            ]
-          }
+        "group": "Get started",
+        "pages": [
+          "introduction",
+          "authentication"
+        ]
+      },
+      {
+        "group": "Store",
+        "pages": [
+          "store"
+        ]
+      },
+      {
+        "group": "Products",
+        "pages": [
+          "products/list",
+          "products/get"
+        ]
+      },
+      {
+        "group": "Collections",
+        "pages": [
+          "collections/list",
+          "collections/get"
+        ]
+      },
+      {
+        "group": "Checkout",
+        "pages": [
+          "checkout/create"
         ]
       }
     ]
