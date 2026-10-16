@@ -1,5 +1,5 @@
 ---
-title: 'Get product'
+title: 'Get a product'
 openapi: 'GET /products/{slug}'
 ---
 
@@ -20,7 +20,7 @@ All you need is your **API key** in the `Authorization` header.
 ## Path Parameters
 
 <ParamField path="slug" type="string" required>
-  The product's `slug`. You can find it in [All products](/products/list). For example, `https://api.baag.cc/v1/products/mw6`.
+  The product's `slug`. You can find it in [Get all products](/products/list). For example, `https://api.baag.cc/v1/products/mw6`.
 </ParamField>
 
 ## Response
@@ -113,7 +113,7 @@ Here is what each part means:
 
 <AccordionGroup>
   <Accordion title="Product not found">
-    Returned with status `404` when there's no product with this slug in your store, or it's archived. Check the slug in [All products](/products/list).
+    Returned with status `404` when there's no product with this slug in your store, or it's archived. Check the slug in [Get all products](/products/list).
 
     ```json
     {

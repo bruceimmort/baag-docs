@@ -39,13 +39,13 @@ All you need to send is the product the buyer picked, in `items`:
 
   <Expandable title="item">
     <ParamField body="product" type="string" required>
-      The product's `slug`, from [All products](/products/list) or [Get product](/products/get).
+      The product's `slug`, from [Get all products](/products/list) or [Get a product](/products/get).
     </ParamField>
     <ParamField body="size" type="string">
-      The `size` of the variant the buyer picked, spelled exactly as [Get product](/products/get) returns it. Leave it out when the product has no sizes.
+      The `size` of the variant the buyer picked, spelled exactly as [Get a product](/products/get) returns it. Leave it out when the product has no sizes.
     </ParamField>
     <ParamField body="color" type="string">
-      The `colorName` of the variant the buyer picked, spelled exactly as [Get product](/products/get) returns it. Leave it out when the product has no colors.
+      The `colorName` of the variant the buyer picked, spelled exactly as [Get a product](/products/get) returns it. Leave it out when the product has no colors.
     </ParamField>
     <ParamField body="quantity" type="integer" default="1">
       How many the buyer wants, from 1 to 100.
@@ -65,16 +65,22 @@ When everything goes well, you get back status `201` with the link to the checko
 }
 ```
 
-Send the buyer to this `url`.
+Send the buyer to this `url`. This is what they see when they open it:
+
+<Frame>
+  <img src="/imgs/checkout-page.jpeg" alt="The Baag checkout page, with the product on the left and the order summary, buyer details and Pay button on the right" />
+</Frame>
 
 Here is what happens next:
 
 - The buyer fills in their details on the checkout page and pays.
-- The checkout page shows them the result. When they're done, they close the page. They aren't sent back to your website.
+- The checkout page shows them the result: a success message if the payment went through, or a failed message if it didn't. When they're done, they close the page. They aren't sent back to your website.
 - The order shows up in **Baag App**, like any other order.
 
 <Note>
-The link works for **30 minutes**. If the buyer doesn't pay in time, start a new checkout. Stock is checked when you start the checkout, so a sold-out product or variant can't be bought.
+- Open the `url` in a **new tab**, so your website stays open.
+- The link works for **30 minutes**. After that, start a new checkout.
+- Sold-out products or variants can't be bought.
 </Note>
 
 ## Error Responses
@@ -93,7 +99,7 @@ The link works for **30 minutes**. If the buyer doesn't pay in time, start a new
     ```
   </Accordion>
   <Accordion title="Variant not found">
-    Returned with status `400` when the `size` and `color` you sent don't match any of the product's variants. Check the spelling against the product's `variants` in [Get product](/products/get).
+    Returned with status `400` when the `size` and `color` you sent don't match any of the product's variants. Check the spelling against the product's `variants` in [Get a product](/products/get).
 
     ```json
     {
@@ -116,7 +122,7 @@ The link works for **30 minutes**. If the buyer doesn't pay in time, start a new
     ```
   </Accordion>
   <Accordion title="Product not found">
-    Returned with status `404` when there's no product with this slug in your store, or it's archived. Check the slug in [All products](/products/list).
+    Returned with status `404` when there's no product with this slug in your store, or it's archived. Check the slug in [Get all products](/products/list).
 
     ```json
     {
