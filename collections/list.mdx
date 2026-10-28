@@ -38,7 +38,7 @@ Here is what each part means:
 - `id` is the collection's id. Keep it: you will need it to get the [collection's products](/collections/get).
 - `imageUrl` is the collection's cover photo, or `null` when it has none.
 
-<Note>Collections are part of the **Pro** plan. On the **Basic** plan, `data` is always an empty list.</Note>
+<Note>Collections are part of the **Pro** plan. On the **Growth** plan, `data` is always an empty list.</Note>
 
 ## Error Responses
 
@@ -63,18 +63,6 @@ Here is what each part means:
       "error": {
         "code": "invalid_api_key",
         "message": "That API key isn't valid. It may have been regenerated."
-      }
-    }
-    ```
-  </Accordion>
-  <Accordion title="Plan required">
-    Returned with status `403` when your store's plan doesn't include the API. Your key works again as soon as your store is on the **Basic** or **Pro** plan.
-
-    ```json
-    {
-      "error": {
-        "code": "plan_required",
-        "message": "This store's plan doesn't include API access."
       }
     }
     ```

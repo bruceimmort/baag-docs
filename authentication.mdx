@@ -69,18 +69,6 @@ If something is wrong with your key, you will get one of these errors back, on a
     }
     ```
   </Accordion>
-  <Accordion title="Plan required">
-    Returned with status `403` when your store's plan doesn't include the API. Your key works again as soon as your store is on the **Basic** or **Pro** plan.
-
-    ```json
-    {
-      "error": {
-        "code": "plan_required",
-        "message": "This store's plan doesn't include API access."
-      }
-    }
-    ```
-  </Accordion>
   <Accordion title="Rate limited">
     Returned with status `429` when your key sent too many requests in a short time. Wait a moment, then try again.
 
